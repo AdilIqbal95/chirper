@@ -1,37 +1,3 @@
-(function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
-const { requestEntries, handleGifs, submitJournal, addGiphy } = require('./journal');
-
-// Setup querySelectors
-const formJournal = document.querySelector('#journal');
-const giphyButton = document.querySelector('button');
-const giphyForm = document.querySelector('#giphy-form');
-console.log(giphyButton)
-
-// Setup event listeners
-formJournal.addEventListener('submit', submitJournal);
-giphyForm.addEventListener('submit', handleGifs);
-giphyButton.addEventListener('click', addGiphy)
-
-document.onload = requestEntries();
-
-let messageBox = document.getElementById("messageBox");
-let wordCount = document.getElementById("wordCount");
-
-// Message box char check
-messageBox.addEventListener("keyup", function() {
-  let characters = messageBox.value.split('');
-  wordCount.innerText = characters.length;
-  if(characters.length > 150){
-    messageBox.value = messageBox.value.substring(0,150);
-    alert('You have gone over the character limit of 150 characters.');
-    wordCount.innerText = 150; 
-  }
-})
-
-
-
-
-},{"./journal":2}],2:[function(require,module,exports){
 // Variables to switch between Production server and Testing locally
 const herokuURL = "https://chirper-uk.herokuapp.com"
 const testingURL = "http://localhost:3000"
@@ -55,8 +21,6 @@ function submitJournal(e) {
     entry: entryMessage,
     date: dateTime,
   };
-
-  console.log(journalData);
 
   const options = {
     method: 'POST',
@@ -188,7 +152,8 @@ function findReactions() {
 // Register Reaction
 function registerReactions(e) {
 
-  console.log(! e instanceof mockEvent)
+  console.log("Is it a mock event? ")
+  console.log(e instanceof mockEvent)
 
   let anchor;
 
@@ -213,12 +178,30 @@ function registerReactions(e) {
 
 // Submit a reaction
 function submitReaction(id, reaction) {
-  console.log(id);
-  console.log(reaction);
+
   const reactionData = {
     id: id,
     reaction: reaction,
   };
+
+  // const options = {
+  //   method: 'POST',
+  //   body: JSON.stringify(reactionData),
+  //   headers: {
+  //     'Content-Type': 'application/json',
+  //   },
+  // };
+
+
+  // fetch(`${herokuURL}/entry/reaction`, options)
+  // .then((r) => r.json())
+  // .then(updateReaction)
+  // .catch(console.warn);
+
+  sendReaction(reactionData);
+}
+
+function sendReaction(reactionData){
 
   const options = {
     method: 'POST',
@@ -228,13 +211,10 @@ function submitReaction(id, reaction) {
     },
   };
 
-
   fetch(`${herokuURL}/entry/reaction`, options)
   .then((r) => r.json())
   .then(updateReaction)
   .catch(console.warn);
-
-  
 }
 
 // Update reaction count
@@ -443,17 +423,8 @@ module.exports = {
   addGiphy,
   handleGifs,
   displayGifs,
-  submitReaction
+  submitReaction,
+  sendReaction,
+  updateReaction, 
+  updateComment
 };
-
-},{"../tests/mockEvent":3}],3:[function(require,module,exports){
-class mockEvent {
-    constructor(name, id){
-        this.name = name; 
-        this.id = id
-    }
-    
-};
-
-module.exports = mockEvent
-},{}]},{},[1]);
